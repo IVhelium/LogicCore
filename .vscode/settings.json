@@ -1,0 +1,11 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/.jj": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true
+    },
+    "C_Cpp.default.compilerPath": "D:/msys64/ucrt64/bin/gcc.exe"
+}
