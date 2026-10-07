@@ -4,12 +4,13 @@
         {
             "type": "shell",
             "label": "C/C++: gcc.exe build active file",
-            "command": "gcc",
+            "command": "D:/msys64/ucrt64/bin/gcc.exe",
             "args": [
+                "-fdiagnostics-color=always",
                 "-g",
-                "${file}",
+                "${fileDirname}\\*.c",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "${fileDirname}\\main.exe"
             ],
             "options": {
                 "cwd": "${fileDirname}"

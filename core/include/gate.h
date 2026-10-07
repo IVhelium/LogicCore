@@ -19,7 +19,7 @@ typedef struct
     int id;
     GateType type;    
 
-    bool input_a;
+    bool input_a;  // Указывает на значение предыдущего выхода
     bool input_b;
     bool output;
 } Gate;
