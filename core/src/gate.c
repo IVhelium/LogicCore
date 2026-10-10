@@ -28,3 +28,20 @@ void gate_update(Gate *gate)
             break;
     }
 }
+
+void gate_set_input(Gate *gate, GateInput input, bool value)
+{
+    if (gate->type == GATE_NOT && input == INPUT_B)
+        return;
+
+    switch (input)
+    {
+        case INPUT_A:
+            gate->input_a = value;
+            break;
+        
+        case INPUT_B:
+            gate->input_b = value;
+            break;
+    }
+}

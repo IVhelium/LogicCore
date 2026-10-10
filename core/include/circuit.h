@@ -19,3 +19,4 @@ typedef struct
 } Circuit;
 
 void circuit_init(Circuit *circuit, const char *name);
+int circuit_add_gate(Circuit *circuit, GateType type);
