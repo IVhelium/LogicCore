@@ -8,6 +8,10 @@ static void menu_circuit(Circuit *circuit);
 // Gate
 static void menu_add_gate(Circuit *circuit);
 
+// List
+static void menu_list_gates(const Circuit *circuit);
+static void menu_list_connections(const Circuit *circuit);
+
 
 void menu_init()
 {
@@ -70,8 +74,10 @@ static void menu_circuit(Circuit *circuit)
         printf("1. Add Gate\n");
         printf("2. Connect Gates\n");
         printf("3. Delete Gate\n");
-        printf("4. Circuit Run\n");
-        printf("5. Exit\n");
+        printf("4. Set Gate Input\n");
+        printf("5. Circuit Run\n");
+        printf("6. Exit\n");
+        printf("7. List Gates\n");
 
         printf("> ");
         scanf("%d", &choice);
@@ -82,8 +88,12 @@ static void menu_circuit(Circuit *circuit)
                 menu_add_gate(circuit);
                 break;
 
-            case 5:
+            case 6:
                 running = false;
+                break;
+
+            case 7:
+                menu_list_gates(circuit);
                 break;
 
             default:
@@ -94,6 +104,7 @@ static void menu_circuit(Circuit *circuit)
 }
 
 #pragma endregion
+
 
 #pragma region Gate
 
@@ -143,6 +154,38 @@ static void menu_add_gate(Circuit *circuit)
     }
 
     printf("Gate created. ID: %d\n", gate_id);
+}
+
+#pragma endregion
+
+
+#pragma region List
+
+static void menu_list_gates(const Circuit *circuit)
+{
+    printf("Gate list: \n");
+    printf("%-20s", "ID");
+    printf("%-15s", "NAME");
+    printf("%-15s", "INPUT A");
+    printf("INPUT B\n");
+
+    for (int i = 0; i < circuit->gate_count; i++)
+    {
+        printf("%-20d", circuit->gates[i].id);
+        printf("%-17s", gate_type_to_string(circuit->gates[i].type));
+        printf("%-15d", circuit->gates[i].input_a);
+
+        // Если тип гейта NOT то в колонке INPUT B ставим "-", если нет показываем значение инпута
+        if (circuit->gates[i].type == GATE_NOT)
+            printf("%s\n", "-");
+        else
+            printf("%d\n", circuit->gates[i].input_b);
+    }
+}
+
+static void menu_list_connections(const Circuit *circuit)
+{
+
 }
 
 #pragma endregion

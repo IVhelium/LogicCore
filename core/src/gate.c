@@ -1,5 +1,14 @@
-#include "gate.h"
 #include <stddef.h>
+#include "gate.h"
+
+static const char *gate_type_names[GATE_TYPE_COUNT] =
+{
+    [GATE_AND] = "AND",
+    [GATE_NOT] = "NOT",
+    [GATE_OR] =  "OR",
+    [GATE_XOR] = "XOR"
+};
+
 
 void gate_update(Gate *gate)
 {
@@ -43,5 +52,16 @@ void gate_set_input(Gate *gate, GateInput input, bool value)
         case INPUT_B:
             gate->input_b = value;
             break;
+
+        default:
+            break;
     }
+}
+
+const char *gate_type_to_string(GateType type)
+{
+    if (type < 0 || type == GATE_TYPE_COUNT) return "UNKNOWN TYPE";
+    if (gate_type_names[type] == NULL) return "UNKNOWN TYPE";
+
+    return gate_type_names[type];
 }

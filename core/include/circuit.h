@@ -18,5 +18,20 @@ typedef struct
     int connection_count;
 } Circuit;
 
-void circuit_init(Circuit *circuit, const char *name);
-int circuit_add_gate(Circuit *circuit, GateType type);
+
+void circuit_init(
+    Circuit *circuit, 
+    const char *name
+);
+
+int circuit_add_gate(
+    Circuit *circuit, 
+    GateType type
+);
+
+int circuit_connect_gate(
+    Circuit *circuit,
+    int from_gate,
+    int to_gate,
+    GateInput to_input
+);

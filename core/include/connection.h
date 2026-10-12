@@ -1,5 +1,5 @@
 #pragma once
-#include "../include/gate.h"
+#include "gate.h"
 
 typedef struct
 {
