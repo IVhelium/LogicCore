@@ -9,8 +9,10 @@ void string_copy(
     const char *source
 );
 
-void string_concat(
+void string_concat_impl(
     char *destination,
     size_t buffer_size,
     ...
 );
+
+#define string_concat(destination, buffer_size, ...) string_concat_impl(destination, buffer_size, __VA_ARGS__, (const char *)NULL)

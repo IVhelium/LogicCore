@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "menu.h"
+#include "utils/string_utils.h"
 
 // Circuit
 static void menu_create_circuit(void);
@@ -87,7 +88,10 @@ static void menu_circuit(Circuit *circuit)
             case 1:
                 menu_add_gate(circuit);
                 break;
-
+            
+            case 5:
+                break;
+            
             case 6:
                 running = false;
                 break;
