@@ -9,7 +9,7 @@ void string_copy(
     const char *source
 );
 
-void string_concat_impl(
+char *string_concat_impl(
     char *destination,
     size_t buffer_size,
     ...

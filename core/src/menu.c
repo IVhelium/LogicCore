@@ -90,6 +90,14 @@ static void menu_circuit(Circuit *circuit)
                 break;
             
             case 5:
+                circuit_add_gate(circuit, GATE_AND);
+                circuit_add_gate(circuit, GATE_OR);
+                circuit_add_gate(circuit, GATE_AND);
+
+                circuit_connect_gate(circuit, 0, 1, INPUT_A);
+                circuit_connect_gate(circuit, 1, 2, INPUT_B);
+
+                menu_list_connections(circuit);
                 break;
             
             case 6:
@@ -191,15 +199,26 @@ static void menu_list_connections(const Circuit *circuit)
 {
     printf("Connection list: \n");
     printf("%-20s", "ID");
-    printf("%-20s", "FROM");
-    printf("%-20s", "TO");
+    printf("%-30s", "FROM");
+    printf("%-30s", "TO");
     printf("TO INPUT\n");
 
     for (int i = 0; i < circuit->connection_count; i++)
     {
+        char from_gate_text[10];
+        char to_gate_text[10];
+
         printf("%-20d", circuit->connections[i].id);
-        printf("(%s) %-20d", gate_type_to_string(circuit->gates[circuit->connections[i].from_gate].type), circuit->connections[i].from_gate);
-        printf("(%s) %-20d", gate_type_to_string(circuit->gates[circuit->connections[i].to_gate].type), circuit->connections[i].to_gate);
+        printf("%-7s%-23d", 
+            string_concat(from_gate_text, sizeof(from_gate_text), "(", 
+                gate_type_to_string(circuit->gates[circuit->connections[i].from_gate].type), ")"), 
+            circuit->connections[i].from_gate
+        );
+        printf("%-7s%-26d", 
+            string_concat(to_gate_text, sizeof(to_gate_text), "(", 
+                gate_type_to_string(circuit->gates[circuit->connections[i].to_gate].type), ")"), 
+            circuit->connections[i].to_gate
+        );
         printf("%s\n", gate_input_to_string(circuit->connections[i].to_input));
     }
 }

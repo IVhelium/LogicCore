@@ -15,12 +15,12 @@ void string_copy(char *destination, size_t buffer_size, const char *source)
     destination[i] = '\0';
 }
 
-void string_concat_impl(char *destination, size_t buffer_size, ...)
+char *string_concat_impl(char *destination, size_t buffer_size, ...)
 {
     va_list list;                   // Создаем лист принимаемых аргументов "..."
 
-    if (buffer_size == 0) return;
-    if (destination == NULL) return;
+    if (buffer_size == 0) return "";
+    if (destination == NULL) return "";
 
     va_start(list, buffer_size);    // Инициализация аргументов
 
@@ -46,4 +46,6 @@ void string_concat_impl(char *destination, size_t buffer_size, ...)
     destination[i] = '\0';
 
     va_end(list);
+
+    return destination;
 }

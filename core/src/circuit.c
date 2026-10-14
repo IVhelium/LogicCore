@@ -12,11 +12,8 @@ void circuit_init(Circuit *circuit, const char *name)
 
 int circuit_add_gate(Circuit *circuit, GateType type)
 {
-    if (circuit == NULL)
-        return -1;
-
-    if (circuit->gate_count >= MAX_GATES)
-        return -1;
+    if (circuit == NULL) return -1;
+    if (circuit->gate_count >= MAX_GATES) return -1;
 
     int id = circuit->gate_count;
     
