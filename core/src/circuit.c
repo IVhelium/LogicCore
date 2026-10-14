@@ -1,21 +1,10 @@
 #include <stddef.h>
 #include "circuit.h"
+#include "utils/string_utils.h"
 
 void circuit_init(Circuit *circuit, const char *name)
 {
-    #pragma region Name
-    // Копируем строку в массив
-    int i = 0;
-
-    while (name[i] != '\0')
-    {
-        circuit->name[i] = name[i];
-        i++;
-    }
-    
-    // После выхода из цикла присаиваем последнему элементу специальный символ конца строки
-    circuit->name[i] = '\0';
-    #pragma endregion
+    string_copy(circuit->name, MAX_NAME_LENGTH, name);
 
     circuit->connection_count = 0;
     circuit->gate_count = 0;
@@ -87,6 +76,7 @@ int circuit_connect_gate(Circuit *circuit, int from_gate, int to_gate, GateInput
 
     Connection *connection = &circuit->connections[id];
 
+    connection->id = id;
     connection->from_gate = from_gate;
     connection->to_gate = to_gate;
     connection->to_input = to_input;

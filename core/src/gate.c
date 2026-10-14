@@ -9,6 +9,11 @@ static const char *gate_type_names[GATE_TYPE_COUNT] =
     [GATE_XOR] = "XOR"
 };
 
+static const char *gate_input_names[INPUT_COUNT] =
+{
+    [INPUT_A] = "A",
+    [INPUT_B] = "B"
+};
 
 void gate_update(Gate *gate)
 {
@@ -64,4 +69,12 @@ const char *gate_type_to_string(GateType type)
     if (gate_type_names[type] == NULL) return "UNKNOWN TYPE";
 
     return gate_type_names[type];
+}
+
+const char *gate_input_to_string(GateInput input)
+{
+    if (input < 0 || input == INPUT_COUNT) return "UNKNOWN INPUT";
+    if (gate_input_names[input] == NULL) return "UNKNOWN INPUT";
+
+    return gate_input_names[input];
 }

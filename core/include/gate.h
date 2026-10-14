@@ -36,3 +36,4 @@ void gate_set_input(
 );
 
 const char *gate_type_to_string(GateType type);
+const char *gate_input_to_string(GateInput input);

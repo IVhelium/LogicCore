@@ -185,7 +185,19 @@ static void menu_list_gates(const Circuit *circuit)
 
 static void menu_list_connections(const Circuit *circuit)
 {
+    printf("Connection list: \n");
+    printf("%-20s", "ID");
+    printf("%-20s", "FROM");
+    printf("%-20s", "TO");
+    printf("TO INPUT\n");
 
+    for (int i = 0; i < circuit->connection_count; i++)
+    {
+        printf("%-20d", circuit->connections[i].id);
+        printf("(%s) %-20d", gate_type_to_string(circuit->gates[circuit->connections[i].from_gate].type), circuit->connections[i].from_gate);
+        printf("(%s) %-20d", gate_type_to_string(circuit->gates[circuit->connections[i].to_gate].type), circuit->connections[i].to_gate);
+        printf("%s\n", gate_input_to_string(circuit->connections[i].to_input));
+    }
 }
 
 #pragma endregion
