@@ -17,7 +17,7 @@ int circuit_add_gate(Circuit *circuit, GateType type)
 
     int id = circuit->gate_count;
     
-    Gate *gate = &circuit->gates[id];   // Присваиваем адрес конкретного Gate чтобы он сохранился в памяти
+    Gate *gate = &circuit->gates[id];
 
     gate->id = id;
     gate->type = type;

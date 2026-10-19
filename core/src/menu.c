@@ -10,11 +10,11 @@ static void menu_circuit(Circuit *circuit);
 static void menu_add_gate(Circuit *circuit);
 
 // List
-static void menu_list_gates(const Circuit *circuit);
+static void menu_list_gates(const Circuit *circuit, const int page_size);
 static void menu_list_connections(const Circuit *circuit);
 
 
-void menu_init()
+void menu_init(void)
 {
     bool running = true;
 
@@ -64,6 +64,8 @@ static void menu_create_circuit(void)
 
 static void menu_circuit(Circuit *circuit)
 {
+    if (circuit == NULL) return;
+
     bool running = true;
 
     while (running)
@@ -90,14 +92,6 @@ static void menu_circuit(Circuit *circuit)
                 break;
             
             case 5:
-                circuit_add_gate(circuit, GATE_AND);
-                circuit_add_gate(circuit, GATE_OR);
-                circuit_add_gate(circuit, GATE_AND);
-
-                circuit_connect_gate(circuit, 0, 1, INPUT_A);
-                circuit_connect_gate(circuit, 1, 2, INPUT_B);
-
-                menu_list_connections(circuit);
                 break;
             
             case 6:
@@ -105,7 +99,13 @@ static void menu_circuit(Circuit *circuit)
                 break;
 
             case 7:
-                menu_list_gates(circuit);
+                for (size_t i = 0; i < 50; i++)
+                {
+                    circuit_add_gate(circuit, GATE_AND);
+                    circuit_add_gate(circuit, GATE_NOT);
+                }
+                
+                menu_list_gates(circuit, 10);
                 break;
 
             default:
@@ -122,6 +122,8 @@ static void menu_circuit(Circuit *circuit)
 
 static void menu_add_gate(Circuit *circuit)
 {
+    if (circuit == NULL) return;
+
     int choice;
     GateType type;
 
@@ -173,30 +175,78 @@ static void menu_add_gate(Circuit *circuit)
 
 #pragma region List
 
-static void menu_list_gates(const Circuit *circuit)
+static void menu_list_gates(const Circuit *circuit, const int page_size)
 {
-    printf("Gate list: \n");
-    printf("%-20s", "ID");
-    printf("%-15s", "NAME");
-    printf("%-15s", "INPUT A");
-    printf("INPUT B\n");
+    if (circuit == NULL) return;
+    if (page_size <= 0) return;
 
-    for (int i = 0; i < circuit->gate_count; i++)
+    int page = 0;
+    int total_pages = (circuit->gate_count + page_size - 1) / page_size;
+    bool running = true;
+
+    while (running)
     {
-        printf("%-20d", circuit->gates[i].id);
-        printf("%-17s", gate_type_to_string(circuit->gates[i].type));
-        printf("%-15d", circuit->gates[i].input_a);
+        int start = page * page_size;
+        int end = start + page_size;
 
-        // Если тип гейта NOT то в колонке INPUT B ставим "-", если нет показываем значение инпута
-        if (circuit->gates[i].type == GATE_NOT)
-            printf("%s\n", "-");
-        else
-            printf("%d\n", circuit->gates[i].input_b);
+        if (end > circuit->gate_count) end = circuit->gate_count;
+
+        printf("\nGate list: \n");
+        printf("%-20s", "ID");
+        printf("%-15s", "NAME");
+        printf("%-15s", "INPUT A");
+        printf("INPUT B\n");
+
+        for (int i = start; i < end; i++)
+        {
+            printf("%-20d", circuit->gates[i].id);
+            printf("%-17s", gate_type_to_string(circuit->gates[i].type));
+            printf("%-15d", circuit->gates[i].input_a);
+
+            // Если тип гейта NOT то в колонке INPUT B ставим "-", если нет показываем значение инпута
+            if (circuit->gates[i].type == GATE_NOT)
+                printf("%s\n", "-");
+            else
+                printf("%d\n", circuit->gates[i].input_b);
+        }
+
+        printf("___________________________________________________________\n");
+        printf("Page: %d/%d\n\n", page + 1, total_pages);
+        if (page + 1 < total_pages) printf("[N] - Next\n");
+        if (page > 0) printf("[P] - Previous\n");
+        printf("[Q] - Back\n\n");
+
+        char input;
+        printf("> ");
+        scanf(" %c", &input);
+
+        switch (input)
+        {
+            case 'N':
+            case 'n':
+                if (page + 1 < total_pages) page++;
+                break;
+
+            case 'P':
+            case 'p':
+                if (page > 0) page--;
+                break;
+
+            case 'Q':
+            case 'q':
+                running = false;
+                break;
+
+            default:
+                break;
+        }
     }
 }
 
 static void menu_list_connections(const Circuit *circuit)
 {
+    if (circuit == NULL) return;
+
     printf("Connection list: \n");
     printf("%-20s", "ID");
     printf("%-30s", "FROM");
@@ -205,21 +255,20 @@ static void menu_list_connections(const Circuit *circuit)
 
     for (int i = 0; i < circuit->connection_count; i++)
     {
-        char from_gate_text[10];
-        char to_gate_text[10];
+        char from_gate_text[32];
+        char to_gate_text[32];
 
-        printf("%-20d", circuit->connections[i].id);
-        printf("%-7s%-23d", 
-            string_concat(from_gate_text, sizeof(from_gate_text), "(", 
-                gate_type_to_string(circuit->gates[circuit->connections[i].from_gate].type), ")"), 
-            circuit->connections[i].from_gate
-        );
-        printf("%-7s%-26d", 
-            string_concat(to_gate_text, sizeof(to_gate_text), "(", 
-                gate_type_to_string(circuit->gates[circuit->connections[i].to_gate].type), ")"), 
-            circuit->connections[i].to_gate
-        );
-        printf("%s\n", gate_input_to_string(circuit->connections[i].to_input));
+        const Connection *connection = &circuit->connections[i];
+
+        printf("%-20d", connection->id);
+        
+        string_concat(from_gate_text, sizeof(from_gate_text), "(", gate_type_to_string(circuit->gates[connection->from_gate].type), ")");
+        printf("%-7s%-23d", from_gate_text, connection->from_gate);
+
+        string_concat(to_gate_text, sizeof(to_gate_text), "(", gate_type_to_string(circuit->gates[connection->to_gate].type), ")");
+        printf("%-7s%-26d", to_gate_text, connection->to_gate);
+
+        printf("%s\n", gate_input_to_string(connection->to_input));
     }
 }
 
