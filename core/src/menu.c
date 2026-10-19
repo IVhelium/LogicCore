@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "menu.h"
 #include "utils/string_utils.h"
+#include "utils/pagination.h"
 
 // Circuit
 static void menu_create_circuit(void);
@@ -11,7 +12,7 @@ static void menu_add_gate(Circuit *circuit);
 
 // List
 static void menu_list_gates(const Circuit *circuit, const int page_size);
-static void menu_list_connections(const Circuit *circuit);
+static void menu_list_connections(const Circuit *circuit, const int page_size);
 
 
 void menu_init(void)
@@ -92,6 +93,14 @@ static void menu_circuit(Circuit *circuit)
                 break;
             
             case 5:
+                for (size_t i = 0; i < 50; i++)
+                {
+                    circuit_add_gate(circuit, GATE_AND);
+                    circuit_add_gate(circuit, GATE_NOT);
+                    circuit_connect_gate(circuit, i, i, INPUT_A);
+                }
+
+                menu_list_connections(circuit, 10);
                 break;
             
             case 6:
@@ -180,24 +189,20 @@ static void menu_list_gates(const Circuit *circuit, const int page_size)
     if (circuit == NULL) return;
     if (page_size <= 0) return;
 
-    int page = 0;
-    int total_pages = (circuit->gate_count + page_size - 1) / page_size;
     bool running = true;
+
+    Pagination pagination;
+    pagination_create(&pagination, 0, page_size, circuit->gate_count);
 
     while (running)
     {
-        int start = page * page_size;
-        int end = start + page_size;
-
-        if (end > circuit->gate_count) end = circuit->gate_count;
-
         printf("\nGate list: \n");
         printf("%-20s", "ID");
         printf("%-15s", "NAME");
         printf("%-15s", "INPUT A");
         printf("INPUT B\n");
 
-        for (int i = start; i < end; i++)
+        for (int i = pagination.start; i < pagination.end; i++)
         {
             printf("%-20d", circuit->gates[i].id);
             printf("%-17s", gate_type_to_string(circuit->gates[i].type));
@@ -211,9 +216,9 @@ static void menu_list_gates(const Circuit *circuit, const int page_size)
         }
 
         printf("___________________________________________________________\n");
-        printf("Page: %d/%d\n\n", page + 1, total_pages);
-        if (page + 1 < total_pages) printf("[N] - Next\n");
-        if (page > 0) printf("[P] - Previous\n");
+        printf("Page: %d/%d\n\n", pagination.page + 1, pagination.total_pages);
+        if (pagination.page + 1 < pagination.total_pages) printf("[N] - Next\n");
+        if (pagination.page > 0) printf("[P] - Previous\n");
         printf("[Q] - Back\n\n");
 
         char input;
@@ -224,12 +229,12 @@ static void menu_list_gates(const Circuit *circuit, const int page_size)
         {
             case 'N':
             case 'n':
-                if (page + 1 < total_pages) page++;
+                pagination_next(&pagination);
                 break;
 
             case 'P':
             case 'p':
-                if (page > 0) page--;
+                pagination_previous(&pagination);
                 break;
 
             case 'Q':
@@ -243,32 +248,72 @@ static void menu_list_gates(const Circuit *circuit, const int page_size)
     }
 }
 
-static void menu_list_connections(const Circuit *circuit)
+static void menu_list_connections(const Circuit *circuit, const int page_size)
 {
     if (circuit == NULL) return;
+    if (page_size <= 0) return;
 
-    printf("Connection list: \n");
-    printf("%-20s", "ID");
-    printf("%-30s", "FROM");
-    printf("%-30s", "TO");
-    printf("TO INPUT\n");
+    bool running = true;
 
-    for (int i = 0; i < circuit->connection_count; i++)
+    Pagination pagination;
+    pagination_create(&pagination, 0, page_size, circuit->connection_count);
+
+    while (running)
     {
-        char from_gate_text[32];
-        char to_gate_text[32];
+        printf("Connection list: \n");
+        printf("%-20s", "ID");
+        printf("%-30s", "FROM");
+        printf("%-30s", "TO");
+        printf("TO INPUT\n");
 
-        const Connection *connection = &circuit->connections[i];
+        for (int i = pagination.start; i < pagination.end; i++)
+        {
+            char from_gate_text[32];
+            char to_gate_text[32];
 
-        printf("%-20d", connection->id);
-        
-        string_concat(from_gate_text, sizeof(from_gate_text), "(", gate_type_to_string(circuit->gates[connection->from_gate].type), ")");
-        printf("%-7s%-23d", from_gate_text, connection->from_gate);
+            const Connection *connection = &circuit->connections[i];
 
-        string_concat(to_gate_text, sizeof(to_gate_text), "(", gate_type_to_string(circuit->gates[connection->to_gate].type), ")");
-        printf("%-7s%-26d", to_gate_text, connection->to_gate);
+            printf("%-20d", connection->id);
+            
+            string_concat(from_gate_text, sizeof(from_gate_text), "(", gate_type_to_string(circuit->gates[connection->from_gate].type), ")");
+            printf("%-7s%-23d", from_gate_text, connection->from_gate);
 
-        printf("%s\n", gate_input_to_string(connection->to_input));
+            string_concat(to_gate_text, sizeof(to_gate_text), "(", gate_type_to_string(circuit->gates[connection->to_gate].type), ")");
+            printf("%-7s%-26d", to_gate_text, connection->to_gate);
+
+            printf("%s\n", gate_input_to_string(connection->to_input));
+        }
+
+        printf("________________________________________________________________________________________\n");
+        printf("Page: %d/%d\n\n", pagination.page + 1, pagination.total_pages);
+        if (pagination.page + 1 < pagination.total_pages) printf("[N] - Next\n");
+        if (pagination.page > 0) printf("[P] - Previous\n");
+        printf("[Q] - Back\n\n");
+
+        char input;
+        printf("> ");
+        scanf(" %c", &input);
+
+        switch (input)
+        {
+            case 'N':
+            case 'n':
+                pagination_next(&pagination);
+                break;
+
+            case 'P':
+            case 'p':
+                pagination_previous(&pagination);
+                break;
+
+            case 'Q':
+            case 'q':
+                running = false;
+                break;
+
+            default:
+                break;
+        }
     }
 }
 

@@ -3,7 +3,7 @@ CFLAGS = -Wall -Wextra -std=c23 -Iinclude
 
 TARGET = logiccore.exe
 
-SRC = src/main.c src/menu.c	src/circuit.c src/gate.c src/utils/string_utils.c
+SRC = src/main.c src/menu.c	src/circuit.c src/gate.c src/utils/string_utils.c src/utils/pagination.c
 
 all:
 	$(CC) $(CFLAGS) $(SRC) -o $(TARGET)
