@@ -2,11 +2,18 @@
     "files.exclude": {
         "**/.git": true,
         "**/.svn": true,
+        "**/.exe": true,
         "**/.hg": true,
         "**/.jj": true,
         "**/.DS_Store": true,
-        "**/Thumbs.db": true
+        "**/Thumbs.db": true,
+        "**/obj": true,
+        "**/build": true
     },
     "C_Cpp.default.compilerPath": "D:/msys64/ucrt64/bin/gcc.exe",
-    "C_Cpp.errorSquiggles": "disabled"
+    "C_Cpp.errorSquiggles": "disabled",
+
+    "cmake.useCMakePresets": "always",
+    "cmake.configureOnOpen": true,
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
 }
