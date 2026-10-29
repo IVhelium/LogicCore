@@ -15,5 +15,6 @@
 
     "cmake.useCMakePresets": "always",
     "cmake.configureOnOpen": true,
-    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools"
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "cmake.sourceDirectory": "D:/GitHub Project/LogicCore/core"
 }

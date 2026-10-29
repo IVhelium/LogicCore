@@ -59,12 +59,12 @@ void menu_connect_gate(Circuit *circuit)
     int input;
 
     printf("Select from gate: ");
-    int from_gate = menu_select_gate(circuit, 15);
-    if (from_gate == -1) return;
+    int from_gate_id = menu_select_gate(circuit, 15);
+    if (from_gate_id == -1) return;
 
     printf("Select to gate: ");
-    int to_gate = menu_select_gate(circuit, 15);
-    if (to_gate == -1) return;
+    int to_gate_id = menu_select_gate(circuit, 15);
+    if (to_gate_id == -1) return;
 
     printf("1. INPUT A\n");
     printf("2. INPUT B\n");
@@ -85,7 +85,7 @@ void menu_connect_gate(Circuit *circuit)
             break;
     }
 
-    int connection = circuit_connect_gate(circuit, from_gate, to_gate, gate_input);
+    int connection = circuit_connect_gate(circuit, from_gate_id, to_gate_id, gate_input);
 
     printf("Connection created: %d", connection);
 }

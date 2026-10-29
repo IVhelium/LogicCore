@@ -86,14 +86,14 @@ static void menu_circuit(Circuit *circuit)
                 break;
             
             case 5:
-                for (size_t i = 0; i < 50; i++)
+                for (size_t i = 0; i < 100; i++)
                 {
                     circuit_add_gate(circuit, GATE_AND);
                     circuit_add_gate(circuit, GATE_NOT);
                     circuit_connect_gate(circuit, i, i, INPUT_A);
                 }
 
-                menu_list_connections(circuit, 10);
+                menu_list_gates(circuit, 15);
                 break;
             
             case 4:

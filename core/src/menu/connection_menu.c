@@ -30,11 +30,11 @@ void menu_list_connections(const Circuit *circuit, const int page_size)
 
             printf("%-20d", connection->id);
             
-            string_concat(from_gate_text, sizeof(from_gate_text), "(", gate_type_to_string(circuit->gates[connection->from_gate].type), ")");
-            printf("%-7s%-23d", from_gate_text, connection->from_gate);
+            string_concat(from_gate_text, sizeof(from_gate_text), "(", gate_type_to_string(circuit->gates[connection->from_gate_id].type), ")");
+            printf("%-7s%-23d", from_gate_text, connection->from_gate_id);
 
-            string_concat(to_gate_text, sizeof(to_gate_text), "(", gate_type_to_string(circuit->gates[connection->to_gate].type), ")");
-            printf("%-7s%-26d", to_gate_text, connection->to_gate);
+            string_concat(to_gate_text, sizeof(to_gate_text), "(", gate_type_to_string(circuit->gates[connection->to_gate_id].type), ")");
+            printf("%-7s%-26d", to_gate_text, connection->to_gate_id);
 
             printf("%s\n", gate_input_to_string(connection->to_input));
         }
