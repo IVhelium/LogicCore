@@ -28,13 +28,11 @@ void menu_list_connections(const Circuit *circuit, const int page_size)
 
             const Connection *connection = &circuit->connections[i];
 
-            if (connection == NULL) return;
-
             const Gate *from_gate = circuit_get_gate_by_id_const(circuit, connection->from_gate_id);
             const Gate *to_gate = circuit_get_gate_by_id_const(circuit, connection->to_gate_id);
 
             if (from_gate == NULL) return;
-            if (from_gate == NULL) return;
+            if (to_gate == NULL) return;
 
             printf("%-20d", connection->id);
             

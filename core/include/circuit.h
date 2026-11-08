@@ -7,7 +7,7 @@
 #define MAX_GATES 100
 #define MAX_CONNECTIONS 300
 
-typedef struct
+typedef struct Circuit
 {
     Connection connections[MAX_CONNECTIONS];
     Gate gates[MAX_GATES];

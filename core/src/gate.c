@@ -17,21 +17,23 @@ static const char *gate_input_names[INPUT_COUNT] =
 
 void gate_update(Gate *gate)
 {
-    bool input_A = gate->input_a;
-    bool input_B = gate->input_b;
+    if (gate == NULL) return;
+
+    bool input_A = gate->inputs[INPUT_A];
+    bool input_B = gate->inputs[INPUT_B];
 
     switch (gate->type)
     {
         case GATE_AND:
-            gate->output = input_A & input_B;
+            gate->output = input_A && input_B;
             break;
         
         case GATE_NOT:
-            gate->output = input_A ^ 1;   // Работает как инвертор. Когда на входе 0 инвертируется в 1
+            gate->output = !input_A;
             break;
         
         case GATE_OR:
-            gate->output = input_A | input_B;
+            gate->output = input_A || input_B;
             break;
         
         case GATE_XOR:
@@ -45,22 +47,11 @@ void gate_update(Gate *gate)
 
 void gate_set_input(Gate *gate, GateInput input, bool value)
 {
-    if (gate->type == GATE_NOT && input != INPUT_A)
-        return;
+    if (gate == NULL) return;
+    if (input < 0 || input >= INPUT_COUNT) return;
+    if (gate->type == GATE_NOT && input != INPUT_A) return;
 
-    switch (input)
-    {
-        case INPUT_A:
-            gate->input_a = value;
-            break;
-        
-        case INPUT_B:
-            gate->input_b = value;
-            break;
-
-        default:
-            break;
-    }
+    gate->inputs[input] = value;
 }
 
 const char *gate_type_to_string(GateType type)

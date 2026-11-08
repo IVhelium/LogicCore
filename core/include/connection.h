@@ -1,7 +1,7 @@
 #pragma once
 #include "gate.h"
 
-typedef struct
+typedef struct Connection
 {
     int id;
     int from_gate_id;

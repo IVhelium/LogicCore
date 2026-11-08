@@ -112,13 +112,13 @@ void menu_list_gates(const Circuit *circuit, const int page_size)
         {
             printf("%-20d", circuit->gates[i].id);
             printf("%-17s", gate_type_to_string(circuit->gates[i].type));
-            printf("%-15d", circuit->gates[i].input_a);
+            printf("%-15d", circuit->gates[i].inputs[INPUT_A]);
 
             // Если тип гейта NOT то в колонке INPUT B ставим "-", если нет показываем значение инпута
             if (circuit->gates[i].type == GATE_NOT)
                 printf("%s\n", "-");
             else
-                printf("%d\n", circuit->gates[i].input_b);
+                printf("%d\n", circuit->gates[i].inputs[INPUT_B]);
         }
 
         printf("___________________________________________________________\n");
@@ -174,13 +174,13 @@ int menu_select_gate(const Circuit *circuit, const int page_size)
         {
             printf("%-20d", circuit->gates[i].id);
             printf("%-17s", gate_type_to_string(circuit->gates[i].type));
-            printf("%-15d", circuit->gates[i].input_a);
+            printf("%-15d", circuit->gates[i].inputs[INPUT_A]);
 
             // Если тип гейта NOT то в колонке INPUT B ставим "-", если нет показываем значение инпута
             if (circuit->gates[i].type == GATE_NOT)
                 printf("%s\n", "-");
             else
-                printf("%d\n", circuit->gates[i].input_b);
+                printf("%d\n", circuit->gates[i].inputs[INPUT_B]);
         }
 
         printf("___________________________________________________________\n");

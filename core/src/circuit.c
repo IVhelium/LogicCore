@@ -24,9 +24,8 @@ int circuit_add_gate(Circuit *circuit, GateType type)
 
     gate->id = id;
     gate->type = type;
-    gate->input_a = false;
-    gate->input_b = false;
-    gate->output  = false;
+    for (int i = 0; i < INPUT_COUNT; i++) gate->inputs[i] = false;
+    gate->output = false;
     
     circuit->gate_count++;
     circuit->gate_next_id++;
@@ -50,9 +49,10 @@ int circuit_connect_gate(Circuit *circuit, int from_gate_id, int to_gate_id, Gat
     for (int i = 0; i < circuit->connection_count; i++)
         if (circuit->connections[i].to_gate_id == to_gate->id && circuit->connections[i].to_input == to_input) return -1;
 
+    int index = circuit->connection_count;
     int id = circuit->connection_next_id;
 
-    Connection *connection = &circuit->connections[id];
+    Connection *connection = &circuit->connections[index];
 
     connection->id = id;
     connection->from_gate_id = from_gate->id;
