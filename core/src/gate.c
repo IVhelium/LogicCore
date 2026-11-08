@@ -45,7 +45,7 @@ void gate_update(Gate *gate)
 
 void gate_set_input(Gate *gate, GateInput input, bool value)
 {
-    if (gate->type == GATE_NOT && input == INPUT_B)
+    if (gate->type == GATE_NOT && input != INPUT_A)
         return;
 
     switch (input)
@@ -65,7 +65,7 @@ void gate_set_input(Gate *gate, GateInput input, bool value)
 
 const char *gate_type_to_string(GateType type)
 {
-    if (type < 0 || type == GATE_TYPE_COUNT) return "UNKNOWN TYPE";
+    if (type < 0 || type >= GATE_TYPE_COUNT) return "UNKNOWN TYPE";
     if (gate_type_names[type] == NULL) return "UNKNOWN TYPE";
 
     return gate_type_names[type];
@@ -73,7 +73,7 @@ const char *gate_type_to_string(GateType type)
 
 const char *gate_input_to_string(GateInput input)
 {
-    if (input < 0 || input == INPUT_COUNT) return "UNKNOWN INPUT";
+    if (input < 0 || input >= INPUT_COUNT) return "UNKNOWN INPUT";
     if (gate_input_names[input] == NULL) return "UNKNOWN INPUT";
 
     return gate_input_names[input];

@@ -93,7 +93,8 @@ static void menu_circuit(Circuit *circuit)
                     circuit_connect_gate(circuit, i, i, INPUT_A);
                 }
 
-                menu_list_gates(circuit, 15);
+                menu_list_connections(circuit, 15);
+                // menu_list_gates(circuit, 15);
                 break;
             
             case 4:

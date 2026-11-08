@@ -17,9 +17,10 @@ int circuit_add_gate(Circuit *circuit, GateType type)
     if (circuit == NULL) return -1;
     if (circuit->gate_count >= MAX_GATES) return -1;
 
+    int index = circuit->gate_count;
     int id = circuit->gate_next_id;
-    
-    Gate *gate = &circuit->gates[id];
+
+    Gate *gate = &circuit->gates[index];
 
     gate->id = id;
     gate->type = type;
@@ -37,25 +38,25 @@ int circuit_connect_gate(Circuit *circuit, int from_gate_id, int to_gate_id, Gat
 {
     if (circuit == NULL) return -1;
 
-    Gate *from_gate_ptr = circuit_get_gate_by_id(circuit, from_gate_id);
-    Gate *to_gate_ptr = circuit_get_gate_by_id(circuit, to_gate_id);
+    Gate *from_gate = circuit_get_gate_by_id(circuit, from_gate_id);
+    Gate *to_gate = circuit_get_gate_by_id(circuit, to_gate_id);
 
-    if (from_gate_ptr == NULL) return -1;
-    if (to_gate_ptr == NULL) return -1;
+    if (from_gate == NULL) return -1;
+    if (to_gate == NULL) return -1;
     if (circuit->connection_count >= MAX_CONNECTIONS) return -1;
     if (to_input < 0 || to_input >= INPUT_COUNT) return -1;
-    if (to_gate_ptr->type == GATE_NOT && to_input == INPUT_B) return -1;
+    if (to_gate->type == GATE_NOT && to_input == INPUT_B) return -1;
 
     for (int i = 0; i < circuit->connection_count; i++)
-        if (circuit->connections[i].to_gate_id == to_gate_ptr->id && circuit->connections[i].to_input == to_input) return -1;
+        if (circuit->connections[i].to_gate_id == to_gate->id && circuit->connections[i].to_input == to_input) return -1;
 
     int id = circuit->connection_next_id;
 
     Connection *connection = &circuit->connections[id];
 
     connection->id = id;
-    connection->from_gate_id = from_gate_ptr->id;
-    connection->to_gate_id = to_gate_ptr->id;
+    connection->from_gate_id = from_gate->id;
+    connection->to_gate_id = to_gate->id;
     connection->to_input = to_input;
 
     circuit->connection_count++;

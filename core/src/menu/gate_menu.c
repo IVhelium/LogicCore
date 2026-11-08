@@ -39,7 +39,7 @@ void menu_add_gate(Circuit *circuit)
 
         default:
             printf("Invalid option\n");
-            break;
+            return;
     }
 
     int gate_id = circuit_add_gate(circuit, type);
@@ -82,7 +82,7 @@ void menu_connect_gate(Circuit *circuit)
             break;
 
         default:
-            break;
+            return;
     }
 
     int connection = circuit_connect_gate(circuit, from_gate_id, to_gate_id, gate_input);

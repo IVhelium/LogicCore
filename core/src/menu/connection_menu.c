@@ -28,12 +28,20 @@ void menu_list_connections(const Circuit *circuit, const int page_size)
 
             const Connection *connection = &circuit->connections[i];
 
+            if (connection == NULL) return;
+
+            const Gate *from_gate = circuit_get_gate_by_id_const(circuit, connection->from_gate_id);
+            const Gate *to_gate = circuit_get_gate_by_id_const(circuit, connection->to_gate_id);
+
+            if (from_gate == NULL) return;
+            if (from_gate == NULL) return;
+
             printf("%-20d", connection->id);
             
-            string_concat(from_gate_text, sizeof(from_gate_text), "(", gate_type_to_string(circuit->gates[connection->from_gate_id].type), ")");
+            string_concat(from_gate_text, sizeof(from_gate_text), "(", gate_type_to_string(from_gate->type), ")");
             printf("%-7s%-23d", from_gate_text, connection->from_gate_id);
 
-            string_concat(to_gate_text, sizeof(to_gate_text), "(", gate_type_to_string(circuit->gates[connection->to_gate_id].type), ")");
+            string_concat(to_gate_text, sizeof(to_gate_text), "(", gate_type_to_string(to_gate->type), ")");
             printf("%-7s%-26d", to_gate_text, connection->to_gate_id);
 
             printf("%s\n", gate_input_to_string(connection->to_input));
