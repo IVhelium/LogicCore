@@ -2,6 +2,21 @@
 #include "circuit.h"
 #include "utils/string_utils.h"
 
+static int circuit_find_connection_index_by_id(const Circuit *circuit, int id);
+
+
+static int circuit_find_connection_index_by_id(const Circuit *circuit, int id)
+{
+    if (circuit == NULL) return -1;
+    if (id < 0) return -1;
+
+    for (int i = 0; i < circuit->connection_count; i++)
+        if (circuit->connections[i].id == id) return i;
+
+    return -1;
+}
+
+
 void circuit_init(Circuit *circuit, const char *name)
 {
     string_copy(circuit->name, MAX_NAME_LENGTH, name);
@@ -11,6 +26,7 @@ void circuit_init(Circuit *circuit, const char *name)
     circuit->connection_count = 0;
     circuit->connection_next_id = 0;
 }
+
 
 int circuit_add_gate(Circuit *circuit, GateType type)
 {
@@ -65,7 +81,25 @@ int circuit_connect_gate(Circuit *circuit, int from_gate_id, int to_gate_id, Gat
     return id;
 }
 
-Gate *circuit_get_gate_by_id(Circuit *circuit, const int id)
+
+bool circuit_remove_connection(Circuit *circuit, int connection_id)
+{
+    if (circuit == NULL) return false;
+    if (connection_id < 0) return false;
+
+    int index = circuit_find_connection_index_by_id(circuit, connection_id);
+    if (index == -1) return false;
+
+    for (int i = index; i < circuit->connection_count - 1; i++)
+        circuit->connections[i] = circuit->connections[i + 1];
+    
+    circuit->connection_count--;
+
+    return true;
+}
+
+
+Gate *circuit_get_gate_by_id(Circuit *circuit, int id)
 {
     if (circuit == NULL) return NULL;
     if (id < 0) return NULL;
@@ -76,7 +110,7 @@ Gate *circuit_get_gate_by_id(Circuit *circuit, const int id)
     return NULL;
 }
 
-const Gate *circuit_get_gate_by_id_const(const Circuit *circuit, const int id)
+const Gate *circuit_get_gate_by_id_const(const Circuit *circuit, int id)
 {
     if (circuit == NULL) return NULL;
     if (id < 0) return NULL;
