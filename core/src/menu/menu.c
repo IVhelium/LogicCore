@@ -86,17 +86,20 @@ static void menu_circuit(Circuit *circuit)
                 break;
             
             case 5:
-                for (size_t i = 0; i < 10; i++)
+                for (size_t i = 0; i < 5; i++)
                 {
                     circuit_add_gate(circuit, GATE_AND);
-                    circuit_add_gate(circuit, GATE_NOT);
                     circuit_connect_gate(circuit, i, i, INPUT_A);
+                    circuit_add_gate(circuit, GATE_NOT);
+                    circuit_connect_gate(circuit, i + 1, i + 1, INPUT_A);
                 }
 
-                printf("%d\n", circuit->connection_count);
+                printf("%d\n", circuit->gate_count);
+                menu_list_gates(circuit, 15);
                 menu_list_connections(circuit, 15);
-                circuit_remove_connection(circuit, 7);
-                printf("%d\n", circuit->connection_count);
+                circuit_remove_gate(circuit, 5);
+                printf("%d\n", circuit->gate_count);
+                menu_list_gates(circuit, 15);
                 menu_list_connections(circuit, 15);
                 // menu_list_gates(circuit, 15);
                 break;

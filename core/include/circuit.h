@@ -29,6 +29,7 @@ int circuit_connect_gate(
     GateInput to_input
 );
 
+bool circuit_remove_gate(Circuit *circuit, int gate_id);
 bool circuit_remove_connection(Circuit *circuit, int connection_id);
 
 Gate *circuit_get_gate_by_id(Circuit *circuit, int id);

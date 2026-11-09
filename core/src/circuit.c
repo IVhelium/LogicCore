@@ -2,8 +2,20 @@
 #include "circuit.h"
 #include "utils/string_utils.h"
 
+#pragma region Static
+static int circuit_find_gate_index_by_id(const Circuit *circuit, int id);
 static int circuit_find_connection_index_by_id(const Circuit *circuit, int id);
 
+static int circuit_find_gate_index_by_id(const Circuit *circuit, int id)
+{
+    if (circuit == NULL) return -1;
+    if (id < 0) return -1;
+
+    for (int i = 0; i < circuit->gate_count; i++)
+        if (circuit->gates[i].id == id) return i;
+
+    return -1;
+}
 
 static int circuit_find_connection_index_by_id(const Circuit *circuit, int id)
 {
@@ -15,8 +27,9 @@ static int circuit_find_connection_index_by_id(const Circuit *circuit, int id)
 
     return -1;
 }
+#pragma endregion
 
-
+#pragma region Void
 void circuit_init(Circuit *circuit, const char *name)
 {
     string_copy(circuit->name, MAX_NAME_LENGTH, name);
@@ -26,8 +39,9 @@ void circuit_init(Circuit *circuit, const char *name)
     circuit->connection_count = 0;
     circuit->connection_next_id = 0;
 }
+#pragma endregion
 
-
+#pragma region Int
 int circuit_add_gate(Circuit *circuit, GateType type)
 {
     if (circuit == NULL) return -1;
@@ -56,8 +70,7 @@ int circuit_connect_gate(Circuit *circuit, int from_gate_id, int to_gate_id, Gat
     Gate *from_gate = circuit_get_gate_by_id(circuit, from_gate_id);
     Gate *to_gate = circuit_get_gate_by_id(circuit, to_gate_id);
 
-    if (from_gate == NULL) return -1;
-    if (to_gate == NULL) return -1;
+    if (from_gate == NULL || to_gate == NULL) return -1;
     if (circuit->connection_count >= MAX_CONNECTIONS) return -1;
     if (to_input < 0 || to_input >= INPUT_COUNT) return -1;
     if (to_gate->type == GATE_NOT && to_input == INPUT_B) return -1;
@@ -80,7 +93,32 @@ int circuit_connect_gate(Circuit *circuit, int from_gate_id, int to_gate_id, Gat
 
     return id;
 }
+#pragma endregion
 
+#pragma region Bool
+bool circuit_remove_gate(Circuit *circuit, int gate_id)
+{
+    if (circuit == NULL) return false;
+    if (gate_id < 0) return false;
+
+    Gate *gate = circuit_get_gate_by_id(circuit, gate_id);
+    if (gate == NULL) return false;
+
+    int index = circuit_find_gate_index_by_id(circuit, gate->id);
+    if (index == -1) return false;
+
+    for (int i = circuit->connection_count - 1; i >= 0; i--)
+        if (circuit->connections[i].from_gate_id == gate_id || circuit->connections[i].to_gate_id == gate_id)
+            if (!circuit_remove_connection(circuit, circuit->connections[i].id))
+                return false;
+
+    for (int i = index; i < circuit->gate_count - 1; i++)
+        circuit->gates[i] = circuit->gates[i + 1];
+
+    circuit->gate_count--;
+
+    return true;
+}
 
 bool circuit_remove_connection(Circuit *circuit, int connection_id)
 {
@@ -97,7 +135,7 @@ bool circuit_remove_connection(Circuit *circuit, int connection_id)
 
     return true;
 }
-
+#pragma endregion
 
 Gate *circuit_get_gate_by_id(Circuit *circuit, int id)
 {

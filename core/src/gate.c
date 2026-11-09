@@ -5,7 +5,7 @@ static const char *gate_type_names[GATE_TYPE_COUNT] =
 {
     [GATE_AND] = "AND",
     [GATE_NOT] = "NOT",
-    [GATE_OR] =  "OR",
+    [GATE_OR]  = "OR",
     [GATE_XOR] = "XOR"
 };
 
