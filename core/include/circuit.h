@@ -7,6 +7,13 @@
 #define MAX_GATES 100
 #define MAX_CONNECTIONS 300
 
+typedef enum SimulationStatus
+{
+    SIMULATION_NULL_REFERENCE,
+    SIMULATION_COMPLETED,
+    SIMULATION_UNSTABLE
+} SimulationStatus;
+
 typedef struct Circuit
 {
     Connection connections[MAX_CONNECTIONS];
@@ -20,6 +27,7 @@ typedef struct Circuit
 
 
 void circuit_init(Circuit *circuit, const char *name);
+SimulationStatus circuit_update(Circuit *circuit);
 
 int circuit_add_gate(Circuit *circuit, GateType type);
 int circuit_connect_gate(

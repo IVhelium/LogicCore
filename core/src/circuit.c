@@ -2,7 +2,6 @@
 #include "circuit.h"
 #include "utils/string_utils.h"
 
-#pragma region Static
 static int circuit_find_gate_index_by_id(const Circuit *circuit, int id);
 static int circuit_find_connection_index_by_id(const Circuit *circuit, int id);
 
@@ -27,11 +26,11 @@ static int circuit_find_connection_index_by_id(const Circuit *circuit, int id)
 
     return -1;
 }
-#pragma endregion
 
-#pragma region Void
 void circuit_init(Circuit *circuit, const char *name)
 {
+    if (circuit == NULL) return;
+
     string_copy(circuit->name, MAX_NAME_LENGTH, name);
 
     circuit->gate_count = 0;
@@ -39,9 +38,29 @@ void circuit_init(Circuit *circuit, const char *name)
     circuit->connection_count = 0;
     circuit->connection_next_id = 0;
 }
-#pragma endregion
 
-#pragma region Int
+SimulationStatus circuit_update(Circuit *circuit)
+{
+    if (circuit == NULL) return SIMULATION_NULL_REFERENCE;
+
+    for (int i = 0; i < circuit->connection_count; i++)
+    {
+        Connection *connection = &circuit->connections[i];
+
+        Gate *from_gate = circuit_get_gate_by_id(circuit, connection->from_gate_id);
+        Gate *to_gate = circuit_get_gate_by_id(circuit, connection->to_gate_id);
+
+        if (from_gate == NULL || to_gate == NULL) continue;
+
+        gate_set_input(to_gate, connection->to_input, from_gate->output);
+    }
+
+    for (int i = 0; i < circuit->gate_count; i++)
+        gate_update(&circuit->gates[i]);
+
+    return SIMULATION_COMPLETED;
+}
+
 int circuit_add_gate(Circuit *circuit, GateType type)
 {
     if (circuit == NULL) return -1;
@@ -93,9 +112,7 @@ int circuit_connect_gate(Circuit *circuit, int from_gate_id, int to_gate_id, Gat
 
     return id;
 }
-#pragma endregion
 
-#pragma region Bool
 bool circuit_remove_gate(Circuit *circuit, int gate_id)
 {
     if (circuit == NULL) return false;
@@ -135,7 +152,6 @@ bool circuit_remove_connection(Circuit *circuit, int connection_id)
 
     return true;
 }
-#pragma endregion
 
 Gate *circuit_get_gate_by_id(Circuit *circuit, int id)
 {

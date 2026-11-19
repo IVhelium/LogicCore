@@ -2,10 +2,13 @@
 
 typedef enum GateType
 {
+    GATE_SWITCH,
+
     GATE_AND,
     GATE_NOT,
     GATE_OR,
     GATE_XOR,
+
     GATE_TYPE_COUNT
 } GateType;
 
