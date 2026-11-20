@@ -50,8 +50,20 @@ void gate_set_input(Gate *gate, GateInput input, bool value)
     if (gate == NULL) return;
     if (input < 0 || input >= INPUT_COUNT) return;
     if (gate->type == GATE_NOT && input != INPUT_A) return;
+    if (gate->type == GATE_SWITCH) return;
 
     gate->inputs[input] = value;
+}
+
+bool gate_set_switch_state(Gate *gate, bool value)
+{
+    if (gate == NULL) return false;
+    if (gate != GATE_SWITCH) return false;
+    if (gate->output == value) return false;
+
+    gate->output = value;
+    
+    return true;
 }
 
 const char *gate_type_to_string(GateType type)
