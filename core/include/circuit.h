@@ -2,6 +2,7 @@
 
 #include "gate.h"
 #include "connection.h"
+#include "queue.h"
 
 #define MAX_NAME_LENGTH 100
 #define MAX_GATES 100
@@ -27,7 +28,7 @@ typedef struct Circuit
 
 
 void circuit_init(Circuit *circuit, const char *name);
-SimulationStatus circuit_update(Circuit *circuit);
+void circuit_propagate_from_gate(Circuit *circuit, IntQueue *queue, int gate_id);
 
 int circuit_add_gate(Circuit *circuit, GateType type);
 int circuit_connect_gate(
@@ -42,3 +43,5 @@ bool circuit_remove_connection(Circuit *circuit, int connection_id);
 
 Gate *circuit_get_gate_by_id(Circuit *circuit, int id);
 const Gate *circuit_get_gate_by_id_const(const Circuit *circuit, int id);
+
+SimulationStatus circuit_simulate(Circuit *circuit);

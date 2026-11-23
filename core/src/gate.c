@@ -66,6 +66,13 @@ bool gate_set_switch_state(Gate *gate, bool value)
     return true;
 }
 
+bool gate_is_source(GateType type)
+{
+    if (type == GATE_SWITCH) return true;
+
+    return false;
+}
+
 const char *gate_type_to_string(GateType type)
 {
     if (type < 0 || type >= GATE_TYPE_COUNT) return "UNKNOWN TYPE";

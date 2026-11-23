@@ -35,5 +35,8 @@ void gate_set_input(
     bool value
 );
 
+bool gate_set_switch_state(Gate *gate, bool value);
+bool gate_is_source(GateType type);
+
 const char *gate_type_to_string(GateType type);
 const char *gate_input_to_string(GateInput input);

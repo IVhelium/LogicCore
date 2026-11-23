@@ -1,6 +1,6 @@
 #include <stddef.h>
 #include "circuit.h"
-#include "utils/string_utils.h"
+#include "string_utils.h"
 
 static int circuit_find_gate_index_by_id(const Circuit *circuit, int id);
 static int circuit_find_connection_index_by_id(const Circuit *circuit, int id);
@@ -39,26 +39,31 @@ void circuit_init(Circuit *circuit, const char *name)
     circuit->connection_next_id = 0;
 }
 
-SimulationStatus circuit_update(Circuit *circuit)
+void circuit_propagate_from_gate(Circuit *circuit, IntQueue *queue, int gate_id)
 {
-    if (circuit == NULL) return SIMULATION_NULL_REFERENCE;
+    Gate *from_gate = circuit_get_gate_by_id(circuit, gate_id);
+    
+    if (from_gate == NULL) return;
 
     for (int i = 0; i < circuit->connection_count; i++)
     {
         Connection *connection = &circuit->connections[i];
 
-        Gate *from_gate = circuit_get_gate_by_id(circuit, connection->from_gate_id);
+        if (connection->from_gate_id != gate_id) continue;
+
         Gate *to_gate = circuit_get_gate_by_id(circuit, connection->to_gate_id);
 
-        if (from_gate == NULL || to_gate == NULL) continue;
+        if (to_gate == NULL) continue;
+
+        bool old_output = to_gate->output;
 
         gate_set_input(to_gate, connection->to_input, from_gate->output);
+        gate_update(to_gate);
+        
+        if (to_gate->output != old_output) queue_push(queue, to_gate->id);
     }
 
-    for (int i = 0; i < circuit->gate_count; i++)
-        gate_update(&circuit->gates[i]);
-
-    return SIMULATION_COMPLETED;
+    queue_destroy(queue);
 }
 
 int circuit_add_gate(Circuit *circuit, GateType type)
@@ -173,4 +178,26 @@ const Gate *circuit_get_gate_by_id_const(const Circuit *circuit, int id)
         if (circuit->gates[i].id == id) return &circuit->gates[i];
     
     return NULL;
+}
+
+SimulationStatus circuit_simulate(Circuit *circuit)
+{
+    if (circuit == NULL) return SIMULATION_NULL_REFERENCE;
+
+    for (int i = 0; i < circuit->connection_count; i++)
+    {
+        Connection *connection = &circuit->connections[i];
+
+        Gate *from_gate = circuit_get_gate_by_id(circuit, connection->from_gate_id);
+        Gate *to_gate = circuit_get_gate_by_id(circuit, connection->to_gate_id);
+
+        if (from_gate == NULL || to_gate == NULL) continue;
+
+        gate_set_input(to_gate, connection->to_input, from_gate->output);
+    }
+
+    for (int i = 0; i < circuit->gate_count; i++)
+        gate_update(&circuit->gates[i]);
+
+    return SIMULATION_COMPLETED;
 }
