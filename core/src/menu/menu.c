@@ -86,6 +86,23 @@ static void menu_circuit(Circuit *circuit)
                 break;
             
             case 5:
+                circuit_add_gate(circuit, GATE_SWITCH);
+                circuit_add_gate(circuit, GATE_NOT);
+                circuit_add_gate(circuit, GATE_NOT);
+                circuit_add_gate(circuit, GATE_NOT);
+                circuit_add_gate(circuit, GATE_NOT);
+
+
+                circuit_connect_gate(circuit, 0, 1, INPUT_A);
+                circuit_connect_gate(circuit, 1, 2, INPUT_A);
+                circuit_connect_gate(circuit, 2, 3, INPUT_A);
+                circuit_connect_gate(circuit, 3, 4, INPUT_A);
+
+                menu_list_gates(circuit, 10);
+
+                circuit_simulate(circuit);
+
+                menu_list_gates(circuit, 10);
                 break;
             
             case 4:

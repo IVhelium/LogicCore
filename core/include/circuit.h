@@ -2,7 +2,7 @@
 
 #include "gate.h"
 #include "connection.h"
-#include "queue.h"
+#include "utils/queue.h"
 
 #define MAX_NAME_LENGTH 100
 #define MAX_GATES 100
@@ -11,6 +11,7 @@
 typedef enum SimulationStatus
 {
     SIMULATION_NULL_REFERENCE,
+    SIMULATION_QUEUE_INIT_ERROR,
     SIMULATION_COMPLETED,
     SIMULATION_UNSTABLE
 } SimulationStatus;

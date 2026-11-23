@@ -1,6 +1,6 @@
 #include <stddef.h>
 #include "circuit.h"
-#include "string_utils.h"
+#include "utils/string_utils.h"
 
 static int circuit_find_gate_index_by_id(const Circuit *circuit, int id);
 static int circuit_find_connection_index_by_id(const Circuit *circuit, int id);
@@ -62,8 +62,6 @@ void circuit_propagate_from_gate(Circuit *circuit, IntQueue *queue, int gate_id)
         
         if (to_gate->output != old_output) queue_push(queue, to_gate->id);
     }
-
-    queue_destroy(queue);
 }
 
 int circuit_add_gate(Circuit *circuit, GateType type)
@@ -182,22 +180,23 @@ const Gate *circuit_get_gate_by_id_const(const Circuit *circuit, int id)
 
 SimulationStatus circuit_simulate(Circuit *circuit)
 {
+    IntQueue queue;
+
     if (circuit == NULL) return SIMULATION_NULL_REFERENCE;
-
-    for (int i = 0; i < circuit->connection_count; i++)
-    {
-        Connection *connection = &circuit->connections[i];
-
-        Gate *from_gate = circuit_get_gate_by_id(circuit, connection->from_gate_id);
-        Gate *to_gate = circuit_get_gate_by_id(circuit, connection->to_gate_id);
-
-        if (from_gate == NULL || to_gate == NULL) continue;
-
-        gate_set_input(to_gate, connection->to_input, from_gate->output);
-    }
+    if (!queue_init(&queue, circuit->gate_count)) return SIMULATION_QUEUE_INIT_ERROR;
 
     for (int i = 0; i < circuit->gate_count; i++)
-        gate_update(&circuit->gates[i]);
+        if (gate_is_source(circuit->gates[i].type)) queue_push(&queue, circuit->gates[i].id);
+
+    while (!queue_is_empty(&queue))
+    {
+        int gate_id = 0;
+
+        queue_pop(&queue, &gate_id);
+        circuit_propagate_from_gate(circuit, &queue, gate_id);
+    }
+    
+    queue_destroy(&queue);
 
     return SIMULATION_COMPLETED;
 }

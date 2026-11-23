@@ -3,10 +3,11 @@
 
 static const char *gate_type_names[GATE_TYPE_COUNT] =
 {
-    [GATE_AND] = "AND",
-    [GATE_NOT] = "NOT",
-    [GATE_OR]  = "OR",
-    [GATE_XOR] = "XOR"
+    [GATE_SWITCH] = "SWITCH",
+    [GATE_AND]    = "AND",
+    [GATE_NOT]    = "NOT",
+    [GATE_OR]     = "OR",
+    [GATE_XOR]    = "XOR"
 };
 
 static const char *gate_input_names[INPUT_COUNT] =

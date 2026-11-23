@@ -1,6 +1,6 @@
 #include <stdlib.h>
 #include <stddef.h>
-#include "queue.h"
+#include "utils/queue.h"
 
 void queue_destroy(IntQueue *queue)
 {
@@ -8,7 +8,7 @@ void queue_destroy(IntQueue *queue)
 
     free(queue->items);
 
-    queue->items == NULL;
+    queue->items = NULL;
     queue->capacity = 0;
     queue->count = 0;
     queue->head = 0;
@@ -28,14 +28,16 @@ bool queue_init(IntQueue *queue, int capacity)
     queue->count = 0;
     queue->head = 0;
     queue->tail = 0;
+
+    return true;
 }
 
 bool queue_pop(IntQueue *queue, int *value)
 {
     if (queue == NULL) return false;
-    if (queue_is_empty(&queue)) return false;
+    if (queue_is_empty(queue)) return false;
 
-    value = queue->items[queue->head];
+    *value = queue->items[queue->head];
     queue->head = (queue->head + 1) % queue->capacity;
     queue->count--;
 
@@ -45,7 +47,7 @@ bool queue_pop(IntQueue *queue, int *value)
 bool queue_push(IntQueue *queue, int value)
 {
     if (queue == NULL) return false;
-    if (queue_is_full(&queue)) return false;
+    if (queue_is_full(queue)) return false;
 
     queue->items[queue->tail] = value;
     queue->tail = (queue->tail + 1) % queue->capacity;

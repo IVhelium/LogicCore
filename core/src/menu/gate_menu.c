@@ -106,7 +106,8 @@ void menu_list_gates(const Circuit *circuit, const int page_size)
         printf("%-20s", "ID");
         printf("%-15s", "NAME");
         printf("%-15s", "INPUT A");
-        printf("INPUT B\n");
+        printf("%-15s", "INPUT B");
+        printf("OUTPUT\n");
 
         for (int i = pagination.start; i < pagination.end; i++)
         {
@@ -116,12 +117,14 @@ void menu_list_gates(const Circuit *circuit, const int page_size)
 
             // Если тип гейта NOT то в колонке INPUT B ставим "-", если нет показываем значение инпута
             if (circuit->gates[i].type == GATE_NOT)
-                printf("%s\n", "-");
+                printf("%-15s", "-");
             else
-                printf("%d\n", circuit->gates[i].inputs[INPUT_B]);
+                printf("%-15d", circuit->gates[i].inputs[INPUT_B]);
+
+            printf("%d\n", circuit->gates[i].output);
         }
 
-        printf("___________________________________________________________\n");
+        printf("_________________________________________________________________________\n");
         printf("Page: %d/%d\n\n", pagination.page + 1, pagination.total_pages);
         if (pagination.page + 1 < pagination.total_pages) printf("[N] - Next\n");
         if (pagination.page > 0) printf("[P] - Previous\n");
