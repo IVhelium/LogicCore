@@ -7,40 +7,22 @@ void menu_add_gate(Circuit *circuit)
 {
     if (circuit == NULL) return;
 
-    int choice;
-    GateType type;
-
     printf("\n=== Choice a gate type ===\n");
-    printf("1. AND\n");
-    printf("2. NOT\n");
-    printf("3. OR\n");
-    printf("4. XOR\n");
+    for (int i = 0; i < GATE_TYPE_COUNT; i++)
+        printf("%d. %s\n", i + 1, gate_type_to_string(i));
 
     printf("> ");
+
+    int choice;
     scanf("%d", &choice);
 
-    switch (choice)
+    if (choice < 1 || choice > GATE_TYPE_COUNT)
     {
-        case 1:
-            type = GATE_AND;
-            break;
-        
-        case 2:
-            type = GATE_NOT;
-            break; 
-        
-        case 3:
-            type = GATE_OR;
-            break;
-        
-        case 4:
-            type = GATE_XOR;
-            break;
-
-        default:
-            printf("Invalid option\n");
-            return;
+        printf("Invalid option\n");
+        return;
     }
+
+    GateType type = (GateType)(choice - 1);
 
     int gate_id = circuit_add_gate(circuit, type);
 
@@ -55,9 +37,6 @@ void menu_add_gate(Circuit *circuit)
 
 void menu_connect_gate(Circuit *circuit)
 {
-    GateInput gate_input;
-    int input;
-
     printf("Select from gate: ");
     int from_gate_id = menu_select_gate(circuit, 15);
     if (from_gate_id == -1) return;
@@ -66,28 +45,61 @@ void menu_connect_gate(Circuit *circuit)
     int to_gate_id = menu_select_gate(circuit, 15);
     if (to_gate_id == -1) return;
 
-    printf("1. INPUT A\n");
-    printf("2. INPUT B\n");
+    for (int i = 0; i < INPUT_COUNT; i++)
+        printf("%d. %s\n", i + 1, gate_input_to_string(i));
+
     printf("Select input: ");
+
+    int input;
     scanf("%d", &input);
 
-    switch (input)
+    if (input < 1 || input > INPUT_COUNT)
     {
-        case 1:
-            gate_input = INPUT_A;
-            break;
-        
-        case 2:
-            gate_input = INPUT_B;
-            break;
-
-        default:
-            return;
+        printf("Invalid option\n");
+        return;
     }
+
+    GateInput gate_input = (GateInput)(input - 1);
 
     int connection = circuit_connect_gate(circuit, from_gate_id, to_gate_id, gate_input);
 
     printf("Connection created: %d", connection);
+}
+
+void menu_delete_gate(Circuit *circuit)
+{
+    printf("Select gate to delete: ");
+    int delete_gate_id = menu_select_gate(circuit, 15);
+    if (delete_gate_id == -1) return;
+
+    if (!circuit_remove_gate(circuit, delete_gate_id))
+    {
+        printf("Cannot delete the gate");
+        return;
+    }
+}
+
+void menu_set_source_gate_output(Circuit *circuit)
+{
+    printf("Select gate to set output: ");
+    int source_gate_id = menu_select_source_gate(circuit, 15);
+    if (source_gate_id == -1) return;
+
+    Gate *source_gate = circuit_get_gate_by_id(circuit, source_gate_id);
+    
+    if (source_gate == NULL) return;
+
+    printf("Set the output value: ");
+    int value;
+    scanf("%d", &value);
+
+    if (value < 0 || value > 1) return;
+
+    if (!gate_set_switch_state(source_gate, (bool)value))
+    {
+        printf("Cannot set the gate output");
+        return;
+    }
 }
 
 void menu_list_gates(const Circuit *circuit, const int page_size)
@@ -165,7 +177,7 @@ int menu_select_gate(const Circuit *circuit, const int page_size)
     Pagination pagination;
     if (!pagination_create(&pagination, 0, page_size, circuit->gate_count)) return -1;
 
-    while (1)
+    while (true)
     {
         printf("\nGate list: \n");
         printf("%-20s", "ID");
@@ -211,6 +223,60 @@ int menu_select_gate(const Circuit *circuit, const int page_size)
 
             for (int i = 0; i < circuit->gate_count; i++)
                 if (circuit->gates[i].id == id) return circuit->gates[i].id;
+        }
+    }
+}
+
+int menu_select_source_gate(const Circuit *circuit, const int page_size)
+{
+    if (circuit == NULL) return -1;
+    if (page_size <= 0) return -1;
+
+    Pagination pagination;
+    if (!pagination_create(&pagination, 0, page_size, circuit->gate_count)) return -1;
+
+    while (true)
+    {
+        printf("\nGate list: \n");
+        printf("%-20s", "ID");
+        printf("%-15s", "NAME");
+        printf("OUTPUT\n");
+
+        for (int i = pagination.start; i < pagination.end; i++)
+        {
+            if (gate_is_source(circuit->gates[i].type))
+            {
+                printf("%-20d", circuit->gates[i].id);
+                printf("%-17s", gate_type_to_string(circuit->gates[i].type));
+                printf("%d\n", circuit->gates[i].output);
+            }  
+        }
+
+        printf("___________________________________________________________\n");
+        printf("Page: %d/%d\n\n", pagination.page + 1, pagination.total_pages);
+        if (pagination.page + 1 < pagination.total_pages) printf("[N] - Next\n");
+        if (pagination.page > 0) printf("[P] - Previous\n");
+        printf("[Q] - Back\n");
+        printf("[ID] - Select Gate\n\n");
+
+        char input[32];
+        printf("> ");
+        scanf("%31s", input);
+
+        if ((input[0] == 'N' && input[1] == '\0') || (input[0] == 'n' && input[1] == '\0'))
+            pagination_next(&pagination);
+        else if ((input[0] == 'P' && input[1] == '\0') || (input[0] == 'p' && input[1] == '\0'))
+            pagination_previous(&pagination);
+        else if ((input[0] == 'Q' && input[1] == '\0') || (input[0] == 'q' && input[1] == '\0'))
+            return -1;
+        else if ((input[0] == 'I' && input[1] == 'D' && input[2] == '\0') || (input[0] == 'i' && input[1] == 'd' && input[2] == '\0'))
+        {
+            int id;
+            printf("Choose gate id: ");
+            scanf("%d", &id);
+
+            for (int i = 0; i < circuit->gate_count; i++)
+                if (circuit->gates[i].id == id && gate_is_source(circuit->gates[i].type)) return circuit->gates[i].id;
         }
     }
 }

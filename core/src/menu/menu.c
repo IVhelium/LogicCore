@@ -2,7 +2,6 @@
 #include "menu/menu.h"
 #include "menu/gate_menu.h"
 #include "menu/connection_menu.h"
-#include "utils/pagination.h"
 
 // Circuit
 static void menu_create_circuit(void);
@@ -72,7 +71,7 @@ static void menu_circuit(Circuit *circuit)
         printf("1. Add Gate\n");
         printf("2. Connect Gates\n");
         printf("3. Delete Gate\n");
-        printf("4. Set Gate Input\n");
+        printf("4. Set Source Gate Output\n");
         printf("5. Circuit Run\n");
         printf("6. Exit\n");
 
@@ -85,42 +84,25 @@ static void menu_circuit(Circuit *circuit)
                 menu_add_gate(circuit);
                 break;
             
-            case 5:
-                circuit_add_gate(circuit, GATE_SWITCH);
-                circuit_add_gate(circuit, GATE_NOT);
-                circuit_add_gate(circuit, GATE_NOT);
-                circuit_add_gate(circuit, GATE_NOT);
-                circuit_add_gate(circuit, GATE_NOT);
+            case 2:
+                menu_connect_gate(circuit);
+                break;
 
+            case 3:
+                menu_delete_gate(circuit);
+                break;
 
-                circuit_connect_gate(circuit, 0, 1, INPUT_A);
-                circuit_connect_gate(circuit, 1, 2, INPUT_A);
-                circuit_connect_gate(circuit, 2, 3, INPUT_A);
-                circuit_connect_gate(circuit, 3, 4, INPUT_A);
-
-                menu_list_gates(circuit, 10);
-
-                circuit_simulate(circuit);
-
-                menu_list_gates(circuit, 10);
+            case 4:
+                menu_set_source_gate_output(circuit);
                 break;
             
-            case 4:
-                menu_connect_gate(circuit);
+            case 5:
+                circuit_simulate(circuit);
+                menu_list_gates(circuit, 15);
                 break;
 
             case 6:
                 running = false;
-                break;
-
-            case 7:
-                for (size_t i = 0; i < 50; i++)
-                {
-                    circuit_add_gate(circuit, GATE_AND);
-                    circuit_add_gate(circuit, GATE_NOT);
-                }
-                
-                menu_list_gates(circuit, 10);
                 break;
 
             default:

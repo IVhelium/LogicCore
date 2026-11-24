@@ -59,8 +59,7 @@ void gate_set_input(Gate *gate, GateInput input, bool value)
 bool gate_set_switch_state(Gate *gate, bool value)
 {
     if (gate == NULL) return false;
-    if (gate != GATE_SWITCH) return false;
-    if (gate->output == value) return false;
+    if (gate->type != GATE_SWITCH) return false;
 
     gate->output = value;
     

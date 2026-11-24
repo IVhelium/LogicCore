@@ -183,11 +183,14 @@ SimulationStatus circuit_simulate(Circuit *circuit)
     IntQueue queue;
 
     if (circuit == NULL) return SIMULATION_NULL_REFERENCE;
-    if (!queue_init(&queue, circuit->gate_count)) return SIMULATION_QUEUE_INIT_ERROR;
+    if (!queue_init(&queue, circuit->gate_count * 10)) return SIMULATION_QUEUE_INIT_ERROR;
 
     for (int i = 0; i < circuit->gate_count; i++)
         if (gate_is_source(circuit->gates[i].type)) queue_push(&queue, circuit->gates[i].id);
 
+    for (int i = 0; i < circuit->gate_count; i++)
+        if (!gate_is_source(circuit->gates[i].type)) queue_push(&queue, circuit->gates[i].id);
+    
     while (!queue_is_empty(&queue))
     {
         int gate_id = 0;
