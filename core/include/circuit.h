@@ -1,0 +1,48 @@
+#pragma once
+
+#include "gate.h"
+#include "connection.h"
+#include "utils/queue.h"
+
+#define MAX_NAME_LENGTH 100
+#define MAX_GATES 100
+#define MAX_CONNECTIONS 300
+
+typedef enum SimulationStatus
+{
+    SIMULATION_NULL_REFERENCE,
+    SIMULATION_QUEUE_INIT_ERROR,
+    SIMULATION_COMPLETED,
+    SIMULATION_UNSTABLE
+} SimulationStatus;
+
+typedef struct Circuit
+{
+    Connection connections[MAX_CONNECTIONS];
+    Gate gates[MAX_GATES];
+    char name[MAX_NAME_LENGTH];
+    int gate_count;
+    int gate_next_id;
+    int connection_count;
+    int connection_next_id;
+} Circuit;
+
+
+void circuit_init(Circuit *circuit, const char *name);
+void circuit_propagate_from_gate(Circuit *circuit, IntQueue *queue, int gate_id);
+
+int circuit_add_gate(Circuit *circuit, GateType type);
+int circuit_connect_gate(
+    Circuit *circuit,
+    int from_gate_id,
+    int to_gate_id,
+    GateInput to_input
+);
+
+bool circuit_remove_gate(Circuit *circuit, int gate_id);
+bool circuit_remove_connection(Circuit *circuit, int connection_id);
+
+Gate *circuit_get_gate_by_id(Circuit *circuit, int id);
+const Gate *circuit_get_gate_by_id_const(const Circuit *circuit, int id);
+
+SimulationStatus circuit_simulate(Circuit *circuit);
