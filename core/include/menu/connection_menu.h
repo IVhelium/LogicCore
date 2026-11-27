@@ -2,4 +2,4 @@
 
 #include "circuit.h"
 
-void menu_list_connections(const Circuit *circuit, const int page_size);
+void menu_list_connections(const Circuit *circuit, int page_size);

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stddef.h>
-#include <stdarg.h>
 
 void string_copy(
     char *destination,

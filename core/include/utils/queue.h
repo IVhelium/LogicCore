@@ -1,7 +1,6 @@
 #pragma once
 
-typedef struct IntQueue
-{
+typedef struct IntQueue {
     int *items;
     int capacity;
     int count;

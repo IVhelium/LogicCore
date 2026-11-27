@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include "utils/string_utils.h"
 
 void string_copy(char *destination, size_t buffer_size, const char *source)

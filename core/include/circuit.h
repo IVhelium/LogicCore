@@ -4,20 +4,18 @@
 #include "connection.h"
 #include "utils/queue.h"
 
-#define MAX_NAME_LENGTH 100
-#define MAX_GATES 100
-#define MAX_CONNECTIONS 300
+constexpr int MAX_NAME_LENGTH = 100;
+constexpr int MAX_GATES = 100;
+constexpr int MAX_CONNECTIONS = 300;
 
-typedef enum SimulationStatus
-{
+typedef enum SimulationStatus {
     SIMULATION_NULL_REFERENCE,
     SIMULATION_QUEUE_INIT_ERROR,
     SIMULATION_COMPLETED,
     SIMULATION_UNSTABLE
 } SimulationStatus;
 
-typedef struct Circuit
-{
+typedef struct Circuit {
     Connection connections[MAX_CONNECTIONS];
     Gate gates[MAX_GATES];
     char name[MAX_NAME_LENGTH];

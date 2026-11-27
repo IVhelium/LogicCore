@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "menu/gate_menu.h"
-#include "utils/string_utils.h"
+#include "console/input.h"
+#include "gate.h"
 #include "utils/pagination.h"
 
 void menu_add_gate(Circuit *circuit)
@@ -9,20 +10,18 @@ void menu_add_gate(Circuit *circuit)
 
     printf("\n=== Choice a gate type ===\n");
     for (int i = 0; i < GATE_TYPE_COUNT; i++)
-        printf("%d. %s\n", i + 1, gate_type_to_string(i));
+        printf("%d. %s\n", i + 1, gate_type_to_string((GateType)i));
 
     printf("> ");
 
-    int choice;
-    scanf("%d", &choice);
-
-    if (choice < 1 || choice > GATE_TYPE_COUNT)
+    int input;
+    if (!input_read_int_range(&input, 1, GATE_TYPE_COUNT, RANGE_LEFT_CLOSED))
     {
         printf("Invalid option\n");
         return;
     }
 
-    GateType type = (GateType)(choice - 1);
+    GateType type = (GateType)(input - 1);
 
     int gate_id = circuit_add_gate(circuit, type);
 
@@ -46,7 +45,7 @@ void menu_connect_gate(Circuit *circuit)
     if (to_gate_id == -1) return;
 
     for (int i = 0; i < INPUT_COUNT; i++)
-        printf("%d. %s\n", i + 1, gate_input_to_string(i));
+        printf("%d. %s\n", i + 1, gate_input_to_string((GateInput)i));
 
     printf("Select input: ");
 

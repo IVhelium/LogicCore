@@ -1,7 +1,6 @@
 #pragma once
 
-typedef struct
-{
+typedef struct Pagination {
     int page;
     int page_size;
     int item_count;

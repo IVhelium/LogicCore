@@ -1,7 +1,6 @@
 #pragma once
 
-typedef enum GateType
-{
+typedef enum GateType {
     GATE_SWITCH,
 
     GATE_AND,
@@ -12,15 +11,13 @@ typedef enum GateType
     GATE_TYPE_COUNT
 } GateType;
 
-typedef enum GateInput
-{
+typedef enum GateInput {
     INPUT_A,
     INPUT_B,
     INPUT_COUNT
 } GateInput;
 
-typedef struct Gate
-{
+typedef struct Gate {
     int id;
     GateType type;    
     bool inputs[INPUT_COUNT];
